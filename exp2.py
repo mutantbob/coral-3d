@@ -27,7 +27,7 @@ def duplicateObject(scene, name, copyobj):
  
     return ob_new
 
-def popUpMaterial( c, t0, t1, t2):
+def popUpMaterial( c, t0, t1, t2, t3):
     rval = bpy.data.materials.new('fadeIn')
     rval.use_transparency=1
     rval.diffuse_color=(1,1,1)
@@ -41,11 +41,14 @@ def popUpMaterial( c, t0, t1, t2):
     rval.keyframe_insert(data_path='diffuse_intensity', frame=t1)
     rval.keyframe_insert(data_path='emit', frame=t1)
     rval.diffuse_color=c
-    rval.emit=0
-    rval.diffuse_intensity=0.8
+    rval.emit=0.2
+    rval.diffuse_intensity=0.7
     rval.keyframe_insert(data_path='diffuse_color', frame=t2)
     rval.keyframe_insert(data_path='diffuse_intensity', frame=t2)
     rval.keyframe_insert(data_path='emit', frame=t2)
+    rval.diffuse_color=(0.5,0.5,0.5)
+    rval.keyframe_insert(data_path='diffuse_color', frame=t3)
+
     return rval
 
 
@@ -66,19 +69,33 @@ def fillLayer(x0,y0,z0, xCount,yCount, t0,dt):
             o2.keyframe_insert(data_path="hide_render", frame=1)
             o2.hide_render = 0
             o2.keyframe_insert(data_path="hide_render", frame=fr)
-            m1 = popUpMaterial( (0,0.8,0) , fr, fr+5, fr+10)
+            m1 = popUpMaterial( (0,0.8,0) , fr, fr+5, fr+10, fr+300)
             o2.data.materials.append(m1)
 
 
+def putInGroup(o, gn):
+
+    if gn in bpy.data.groups:
+        group = bpy.data.groups[gn]
+    else:
+        group = bpy.data.groups.new(gn)
+
+    group.objects.link(o)
+
 def addLump(x,y,z, t):
-    o2 = duplicateObject(bpy.context.scene, "bacon", bpy.context.object)
+    o2 = duplicateObject(bpy.context.scene, "lump", bpy.context.object)
     o2.location = (x,y,z)
     o2.hide_render=1
+    o2.hide = 1
     fr = t*10
     o2.keyframe_insert(data_path="hide_render", frame=1)
+    o2.keyframe_insert(data_path="hide", frame=1)
     o2.hide_render = 0
+    o2.hide = 0
     o2.keyframe_insert(data_path="hide_render", frame=fr)
-    m1 = popUpMaterial( (0,0.8,0) , fr, fr+7, fr+20)
+    o2.keyframe_insert(data_path="hide", frame=fr)
+    m1 = popUpMaterial( (0,0.8,0) , fr, fr+7, fr+20, fr+300)
     o2.data.materials.append(m1)
+    putInGroup(o2, "lumps")
 
 #fillLayer(-20,0,0, 5,4, 5,3)
