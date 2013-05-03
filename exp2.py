@@ -46,6 +46,13 @@ def popUpMaterial( c, t0, t1, t2, t3):
     rval.keyframe_insert(data_path='diffuse_color', frame=t2)
     rval.keyframe_insert(data_path='diffuse_intensity', frame=t2)
     rval.keyframe_insert(data_path='emit', frame=t2)
+    
+    for curve in rval.animation_data.action.fcurves.items():
+        print (curve[1].data_path )
+        if 'diffuse_color'==curve[1].data_path:
+            curve[1].keyframe_points.items()[1][1].interpolation = 'LINEAR'
+
+    
     rval.diffuse_color=(0.5,0.5,0.5)
     rval.keyframe_insert(data_path='diffuse_color', frame=t3)
 
@@ -94,7 +101,7 @@ def addLump(x,y,z, t):
     o2.hide = 0
     o2.keyframe_insert(data_path="hide_render", frame=fr)
     o2.keyframe_insert(data_path="hide", frame=fr)
-    m1 = popUpMaterial( (0,0.8,0) , fr, fr+7, fr+20, fr+300)
+    m1 = popUpMaterial( (0,0.8,0) , fr, fr+7, fr+20, fr+600)
     o2.data.materials.append(m1)
     putInGroup(o2, "lumps")
 
